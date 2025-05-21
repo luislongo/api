@@ -1,10 +1,10 @@
-from app import schemas
+from app.schemas import user_schema 
 from app.models import user_models
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def hash(user: schemas.CreateUserPayload):
+def hash(user: user_schema.CreateUserPayload):
     pwd_hash = pwd_context.hash(user.password)
     new_user = user_models.User(
         email=user.email,
