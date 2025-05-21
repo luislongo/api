@@ -5,14 +5,14 @@ from sqlalchemy.orm import Session
 from app.models import post_models
 from app.schemas import post_schema
 
-router = APIRouter()
+router = APIRouter(prefix='/posts')
 
-@router.get("/posts", response_model=list[post_schema.GetPostResponse],)
+@router.get("/", response_model=list[post_schema.GetPostResponse],)
 async def get_posts(db: Session = Depends(get_db)):
     posts = db.query(post_models.Post).all()
     return posts
 
-@router.get("/posts/latest", response_model=post_schema.GetLatestPostResponse)
+@router.get("/latest", response_model=post_schema.GetLatestPostResponse)
 async def get_latest_post(db: Session = Depends(get_db)):
     post = db.query(post_models.Post).order_by(post_models.Post.created_at.desc()).first()
     if post:
@@ -20,7 +20,7 @@ async def get_latest_post(db: Session = Depends(get_db)):
     
     raise HTTPException(status_code=404, detail="No posts found")
 
-@router.get("/posts/{post_id}", response_model=post_schema.GetPostResponse)
+@router.get("/{post_id}", response_model=post_schema.GetPostResponse)
 async def get_post(post_id: int, db: Session = Depends(get_db)):
     post = db.query(post_models.Post).filter(post_models.Post.id == post_id).first()
     if post:
@@ -28,7 +28,7 @@ async def get_post(post_id: int, db: Session = Depends(get_db)):
     
     raise HTTPException(status_code=404, detail=f"Post {post_id} not found")
 
-@router.post("/posts", response_model=post_schema.CreatePostResponse, status_code=201)
+@router.post("/", response_model=post_schema.CreatePostResponse, status_code=201)
 async def create_post(post: post_schema.CreatePostPayload, db: Session = Depends(get_db)):
     new_post = post_models.Post(**post.model_dump())
 
@@ -39,7 +39,7 @@ async def create_post(post: post_schema.CreatePostPayload, db: Session = Depends
 
     return new_post
 
-@router.put("/posts/{post_id}", response_model=post_schema.UpdatePostResponse)
+@router.put("/{post_id}", response_model=post_schema.UpdatePostResponse)
 async def update_post(post_id: int, post: post_schema.UpdatePostPayload, db: Session = Depends(get_db)):
     post_query = db.query(post_models.Post).filter(post_models.Post.id == post_id)
     
@@ -55,7 +55,7 @@ async def update_post(post_id: int, post: post_schema.UpdatePostPayload, db: Ses
 
     return updated_post
 
-@router.delete("/posts/{post_id}")
+@router.delete("/{post_id}")
 async def delete_post(post_id: int, db: Session = Depends(get_db)):
     post = db.query(post_models.Post).filter(post_models.Post.id == post_id).delete(synchronize_session=False)
     db.commit()
