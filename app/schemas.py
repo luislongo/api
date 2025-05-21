@@ -46,3 +46,6 @@ class UserBaseResponse(UserBase):
 
 class CreateUserResponse(UserBaseResponse):
     pass
+
+class GetUserResponse(UserBaseResponse):
+    pass
