@@ -2,12 +2,13 @@ import psycopg2
 import time
 from fastapi import FastAPI
 from psycopg2.extras import RealDictCursor
-from . import models
+from .models import user_models, post_models
 from .database import engine
 
 app = FastAPI()
 
-models.Base.metadata.create_all(bind=engine)
+user_models.Base.metadata.create_all(bind=engine)
+post_models.Base.metadata.create_all(bind=engine)
 
 while True:
     try: 

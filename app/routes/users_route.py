@@ -1,19 +1,21 @@
 
-from app import models, schemas
-from app.adapters import adapters
+from app import schemas
+from app.adapters import users_adapter
 from app.database import get_db
 from fastapi import HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
+
+from app.models import user_models
 
 router = APIRouter()
 
 @router.post("/users", response_model=schemas.CreateUserResponse)
 async def create_user(user: schemas.CreateUserPayload, db: Session = Depends(get_db)):
-    existing_user = db.query(models.User).filter(models.User.email == user.email).first()
+    existing_user = db.query(user_models.User).filter(user_models.User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    new_user = adapters.hash(user)
+    new_user = users_adapter.hash(user)
 
     db.add(new_user)
     db.commit()
@@ -24,7 +26,7 @@ async def create_user(user: schemas.CreateUserPayload, db: Session = Depends(get
 
 @router.get("/users/{user_id}", response_model=schemas.UserBaseResponse)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+    user = db.query(user_models.User).filter(user_models.User.id == user_id).first()
     
     if user:
         return user
