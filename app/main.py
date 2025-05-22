@@ -5,6 +5,7 @@ from psycopg2.extras import RealDictCursor
 from .models import user_models, post_models
 from .database import engine
 
+
 app = FastAPI()
 
 user_models.Base.metadata.create_all(bind=engine)
@@ -30,7 +31,7 @@ while True:
         print(f"Retrying in {wait_time} seconds...")
         time.sleep(wait_time)
 
-from .routes import posts_route, users_route, root_route
+from .routes import posts_route, users_route, root_route, auth_route
 app.include_router(root_route.router)
 app.include_router(posts_route.router)
 app.include_router(users_route.router)

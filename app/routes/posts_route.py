@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.models import post_models
 from app.schemas import post_schema
 
-router = APIRouter(prefix='/posts')
+router = APIRouter(prefix='/posts', tags=["posts"])
 
 @router.get("/", response_model=list[post_schema.GetPostResponse],)
 async def get_posts(db: Session = Depends(get_db)):

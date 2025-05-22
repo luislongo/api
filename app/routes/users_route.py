@@ -7,15 +7,22 @@ from sqlalchemy.orm import Session
 
 from app.models import user_models
 
-router = APIRouter(prefix='/users')
+router = APIRouter(prefix='/users', tags=["users"])
 
 @router.post("/", response_model=user_schema.CreateUserResponse)
 async def create_user(user: user_schema.CreateUserPayload, db: Session = Depends(get_db)):
+
     existing_user = db.query(user_models.User).filter(user_models.User.email == user.email).first()
+
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    new_user = users_adapter.hash(user)
+    pwd_hash = users_adapter.hash(user.password)
+
+    new_user = user_models.User(
+        email=user.email,
+        public_key=pwd_hash,
+     )
 
     db.add(new_user)
     db.commit()
