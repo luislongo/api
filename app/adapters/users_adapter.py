@@ -4,11 +4,9 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def hash(user: user_schema.CreateUserPayload):
-    pwd_hash = pwd_context.hash(user.password)
-    new_user = user_models.User(
-        email=user.email,
-        public_key=pwd_hash
-    )
-    
-    return new_user
+def hash(password: str):
+    pwd_hash = pwd_context.hash(password)
+    return pwd_hash
+
+def verify(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)

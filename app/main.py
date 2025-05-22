@@ -35,3 +35,4 @@ from .routes import posts_route, users_route, root_route, auth_route
 app.include_router(root_route.router)
 app.include_router(posts_route.router)
 app.include_router(users_route.router)
+app.include_router(auth_route.router)
